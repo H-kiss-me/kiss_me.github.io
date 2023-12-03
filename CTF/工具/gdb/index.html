@@ -1,13 +1,13 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>gdb的使用 | Xcs</title><meta name="author" content="XC-lei"><meta name="copyright" content="XC-lei"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言   步过 步入 步出    一行行往下走，无论是否有函数，直接进入下一行代码 无函数，直接进行下一行代码，相当于步过有函数则进入函数第一行代码 直接将现在所在的函数执行完，并跳出该函数   命令 start程序运行一遍检查是否有错误  r如果此前没有断点，则运行完程序，如果有断点，则暂停到第一个可用断点处看寄存器  x&#x2F;i以汇编形式显示内存中的内容，可以指定地址或者寄存器  b设置">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>gdb的使用 | Xcs</title><meta name="author" content="XC-lei"><meta name="copyright" content="XC-lei"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言   步过 步入 步出    一行行往下走，无论是否有函数，直接进入下一行代码 无函数，直接进行下一行代码，相当于步过有函数则进入函数第一行代码 直接将现在所在的函数执行完，并跳出该函数    rip是64位 eip是32位  命令 gcc 文件.c -o 文件_x64 （将源文件编译成x64位系统）                               gcc hello.c -o h">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gdb的使用">
 <meta property="og:url" content="http://sssxc.xyz/CTF/%E5%B7%A5%E5%85%B7/gdb/index.html">
 <meta property="og:site_name" content="Xcs">
-<meta property="og:description" content="前言   步过 步入 步出    一行行往下走，无论是否有函数，直接进入下一行代码 无函数，直接进行下一行代码，相当于步过有函数则进入函数第一行代码 直接将现在所在的函数执行完，并跳出该函数   命令 start程序运行一遍检查是否有错误  r如果此前没有断点，则运行完程序，如果有断点，则暂停到第一个可用断点处看寄存器  x&#x2F;i以汇编形式显示内存中的内容，可以指定地址或者寄存器  b设置">
+<meta property="og:description" content="前言   步过 步入 步出    一行行往下走，无论是否有函数，直接进入下一行代码 无函数，直接进行下一行代码，相当于步过有函数则进入函数第一行代码 直接将现在所在的函数执行完，并跳出该函数    rip是64位 eip是32位  命令 gcc 文件.c -o 文件_x64 （将源文件编译成x64位系统）                               gcc hello.c -o h">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg">
 <meta property="article:published_time" content="2023-12-03T04:01:27.272Z">
-<meta property="article:modified_time" content="2023-12-03T04:26:39.484Z">
+<meta property="article:modified_time" content="2023-12-03T11:43:50.711Z">
 <meta property="article:author" content="XC-lei">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="调试工具">
@@ -57,7 +57,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2023-12-03 12:26:39'
+  postUpdate: '2023-12-03 19:43:50'
 }</script><script>(win=>{
       win.saveToLocal = {
         set: (key, value, ttl) => {
@@ -175,7 +175,7 @@
     document.addEventListener('pjax:send', () => { preloader.initLoading() })
     document.addEventListener('pjax:complete', () => { preloader.endLoading() })
   }
-})()</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Xcs"><span class="site-name">Xcs</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">gdb的使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-12-03T04:01:27.272Z" title="发表于 2023-12-03 12:01:27">2023-12-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-12-03T04:26:39.484Z" title="更新于 2023-12-03 12:26:39">2023-12-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/">CTF</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/%E5%B7%A5%E5%85%B7/">工具</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">324</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>1分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="gdb的使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><table>
+})()</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Xcs"><span class="site-name">Xcs</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">gdb的使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-12-03T04:01:27.272Z" title="发表于 2023-12-03 12:01:27">2023-12-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-12-03T11:43:50.711Z" title="更新于 2023-12-03 19:43:50">2023-12-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/">CTF</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/%E5%B7%A5%E5%85%B7/">工具</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">574</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="gdb的使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><table>
 <thead>
 <tr>
 <th>步过</th>
@@ -189,14 +189,88 @@
 <td>直接将现在所在的函数执行完，并跳出该函数</td>
 </tr>
 </tbody></table>
+<hr>
+<p><em><strong>rip是64位</strong></em></p>
+<p><em><strong>eip是32位</strong></em></p>
+<hr>
 <h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><ul>
-<li><p><strong>start</strong><br>程序运行一遍检查是否有错误</p>
+<li><p><strong>gcc 文件.c -o 文件_x64</strong> （将源文件编译成x64位系统）                           </p>
+<p>   <code>gcc hello.c -o hello_x64</code></p>
 </li>
-<li><p><strong>r</strong><br>如果此前没有断点，则运行完程序，如果有断点，则暂停到第一个可用断点处<br>看寄存器</p>
+<li><p><strong>gcc -m32 文件.c -o 文件_x86</strong> （将源文件编译成x86系统下的32位文件）</p>
+<p>   <code>gcc -m32 hello.c -o hello_x86</code></p>
 </li>
-<li><p><strong>x&#x2F;i</strong><br>以汇编形式显示内存中的内容，可以指定地址或者寄存器</p>
+</ul>
+<p>​       <strong>gcc -m64  文件.c  -o 文件_x86</strong>（将源文件编译成x86系统下的64位文件）</p>
+<p>​          <code>gcc -m64 hello.c -0 hello_x86</code></p>
+<ul>
+<li><p><strong>gdb .&#x2F;文件_x64（x86）</strong></p>
+<p>gdb开始调试</p>
 </li>
-<li><p><strong>b</strong><br>设置断点<br>b加&lt;函数名称&gt;（b main）<br>b加&lt;行号&gt;（b numble）<br>b加*&lt;代码地址&gt;（b *0x18）</p>
+<li><p><strong>start</strong><br>程序运行到入口点，gdb定义的入口点</p>
+</li>
+<li><p><strong>r</strong><br>如果此前没有断点，则运行完程序，如果有断点，则暂停到第一个可用断点处</p>
+</li>
+<li><p><strong>i r</strong>  </p>
+<p>看寄存器</p>
+<hr>
+<p><em><strong>反编译指令</strong></em></p>
+</li>
+</ul>
+<ol>
+<li><p><strong>disassemble</strong><br>查看当前函数的反汇编</p>
+</li>
+<li><p><strong>disassemble 函数名字</strong><br>查看这个函数的反汇编</p>
+</li>
+<li><p><strong>disassemble 地址</strong><br>地址附近函数的反汇编</p>
+</li>
+<li><p><strong>disassemble 地址1，地址2</strong><br>查看地址1到地址2范围内的反汇编</p>
+</li>
+<li><p><strong>disassemble $rip</strong><br>反编译rip现在所直到的函数位置</p>
+</li>
+</ol>
+<hr>
+<p><em><strong>x&#x2F;数字i $rip</strong></em></p>
+<p><strong>从rip开始反汇编（数字）行</strong></p>
+<p><code>x/20i $rip</code>        (从rip开始反汇编20行)</p>
+<table>
+<thead>
+<tr>
+<th>i</th>
+<th>d *</th>
+<th>x</th>
+<th>s *</th>
+<th>b</th>
+<th>w *</th>
+<th>g *</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>汇编</td>
+<td>10进制</td>
+<td>16进制</td>
+<td>字符</td>
+<td>一个字节</td>
+<td>8个字节</td>
+<td>4个字节</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><em><strong>set</strong></em></p>
+<ol>
+<li>set *0x地址&#x3D;数值（给地址赋值）       <code>set *0x8888=62</code></li>
+<li>set $寄存器&#x3D;数值（给寄存器赋值）   <code>set $rip=62</code></li>
+</ol>
+</li>
+<li><p><strong>b</strong><br>设置断点</p>
+<ol>
+<li><p>b加&lt;函数名称&gt;（b main）</p>
+</li>
+<li><p>b加&lt;行号&gt;（b numble）</p>
+</li>
+<li><p>b加*&lt;代码地址&gt;（b *0x18）</p>
+</li>
+</ol>
 <hr>
 <table>
 <thead>
@@ -234,15 +308,15 @@
 </li>
 <li><p><strong>finish（步出）</strong></p>
 </li>
-<li><p><strong>d 3</strong><br>删除断点</p>
+<li><p><strong>d  数字</strong><br>删除断点</p>
 <hr>
 </li>
 </ul>
 <table>
 <thead>
 <tr>
-<th>disable b 3</th>
-<th>enable b 3</th>
+<th>disable b 数字</th>
+<th>enable b 数字</th>
 </tr>
 </thead>
 <tbody><tr>
