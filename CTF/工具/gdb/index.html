@@ -1,0 +1,492 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>gdb的使用 | Xcs</title><meta name="author" content="XC-lei"><meta name="copyright" content="XC-lei"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言简介GDB 堪称陆地最强调试器  gdb是GNU开源组织发布的一个强大的Linux下的程序调试工具 gdb除支持c&#x2F;c++语言外还支持go、D、object-c、fortran等语言 GDB主要帮助你完成下面四个方面的功能： 启动你的程序，可以按照你的自定义的要求随心所欲的运行程序。 可让被调试的程序在你所指定的调置的断点处停住。（断点可以是条件表达式） 当程序被停住时，可以检查此时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gdb的使用">
+<meta property="og:url" content="http://sssxc.xyz/CTF/%E5%B7%A5%E5%85%B7/gdb/index.html">
+<meta property="og:site_name" content="Xcs">
+<meta property="og:description" content="前言简介GDB 堪称陆地最强调试器  gdb是GNU开源组织发布的一个强大的Linux下的程序调试工具 gdb除支持c&#x2F;c++语言外还支持go、D、object-c、fortran等语言 GDB主要帮助你完成下面四个方面的功能： 启动你的程序，可以按照你的自定义的要求随心所欲的运行程序。 可让被调试的程序在你所指定的调置的断点处停住。（断点可以是条件表达式） 当程序被停住时，可以检查此时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg">
+<meta property="article:published_time" content="2024-01-20T13:02:42.081Z">
+<meta property="article:modified_time" content="2024-02-26T12:29:37.395Z">
+<meta property="article:author" content="XC-lei">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="调试工具">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg"><link rel="shortcut icon" href="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/7335AC25911725E74E16F7F4F0C30210.jpg"><link rel="canonical" href="http://sssxc.xyz/CTF/%E5%B7%A5%E5%85%B7/gdb/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://github.com/SorkinType/Agbalumo" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: XC-lei","link":"链接: ","source":"来源: Xcs","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'gdb的使用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-26 20:29:37'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (false) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Xcs"><span class="site-name">Xcs</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">gdb的使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-01-20T13:02:42.081Z" title="发表于 2024-01-20 21:02:42">2024-01-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-26T12:29:37.395Z" title="更新于 2024-02-26 20:29:37">2024-02-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/">CTF</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/%E5%B7%A5%E5%85%B7/">工具</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="gdb的使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><strong>GDB 堪称陆地最强调试器</strong></p>
+<ul>
+<li>gdb是GNU开源组织发布的一个强大的Linux下的程序调试工具</li>
+<li>gdb除支持c&#x2F;c++语言外还支持go、D、object-c、fortran等语言</li>
+<li>GDB主要帮助你完成下面四个方面的功能：<ul>
+<li>启动你的程序，可以按照你的自定义的要求随心所欲的运行程序。</li>
+<li>可让被调试的程序在你所指定的调置的断点处停住。（断点可以是条件表达式）</li>
+<li>当程序被停住时，可以检查此时你的程序中所发生的事。</li>
+<li>你可以改变你的程序，将一个BUG产生的影响修正从而测试其他BUG</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><table>
+<thead>
+<tr>
+<th>步过</th>
+<th>步入</th>
+<th>步出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一行行往下走，无论是否有函数，直接进入下一行代码</td>
+<td>无函数，直接进行下一行代码，相当于步过<br/>有函数则进入函数第一行代码</td>
+<td>直接将现在所在的函数执行完，并跳出该函数</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p><em><strong>rip是64位</strong></em></p>
+<p>   <em><strong>eip是32位</strong></em></p>
+<h3 id="编译指令"><a href="#编译指令" class="headerlink" title="编译指令"></a>编译指令</h3></li>
+<li><p><strong>gcc 文件.c -o 文件_x64</strong> （将源文件编译成x64位系统）                           </p>
+<p><code>gcc hello.c -o hello_x64</code></p>
+</li>
+<li><p><strong>gcc -m32 文件.c -o 文件_x86</strong> （将源文件编译成x86系统下的32位文件）</p>
+<p>   <code>gcc -m32 hello.c -o hello_x86</code></p>
+</li>
+<li><p><strong>gcc -m32 文件.c -fomit-frame-pointer -o 文件_x86_esp</strong></p>
+<p><code>gcc -m32 hello.c -fomit-frame-pointer -o hello_x86_esp</code></p>
+</li>
+<li><p><strong>gcc 文件.c -fomit-frame-pointer -o 文件_x64_esp</strong></p>
+<p><code>gcc hello.c -fomit-frame-pointer -o hello_x64_esp</code></p>
+</li>
+<li><p><strong>gcc -s 文件.c</strong></p>
+<p><code>gcc -s hello.c</code></p>
+</li>
+<li><p><strong>gcc 文件.c -no-pie -o 文件_x64_nopie</strong>  (去掉pie)</p>
+<p><code>gcc hello.c -no-pie -o hello_x64_nopie</code></p>
+</li>
+<li><p><strong>gcc 文件.c -static -o 文件_x64_static</strong>  (静态链接编译)</p>
+<p><code>gcc hello.c -static -o hello_x64_static</code></p>
+</li>
+<li><p><strong>gdb .&#x2F;文件_x64（x86）</strong>    （gdb开始调试）</p>
+<p><code>gdb ./hello_x64</code></p>
+</li>
+<li><ul>
+<li><ul>
+<li><p>objdump -d 文件 -M intel |less</p>
+<p>(相当于ida，在shell里进行反编译)</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="基础调试指令"><a href="#基础调试指令" class="headerlink" title="基础调试指令"></a>基础调试指令</h3><ul>
+<li><p><strong>start</strong></p>
+<p>程序运行到入口点，gdb定义的入口点</p>
+</li>
+<li><p><strong>r</strong></p>
+<p>如果此前没有断点，则运行完程序，如果有断点，则暂停到第一个可用断点处</p>
+</li>
+</ul>
+<ul>
+<li><p><strong>i</strong></p>
+<p>查看信息</p>
+<ul>
+<li><strong>i r</strong></li>
+</ul>
+<p>  查看寄存器</p>
+<ul>
+<li><p><strong>i b</strong></p>
+<p>查看断点</p>
+</li>
+</ul>
+</li>
+<li><p><strong>c</strong><br>执行到遇到断点为止或者程序结束</p>
+</li>
+<li><p><strong>b</strong><br>设置断点</p>
+<ol>
+<li><p>b加&lt;函数名称&gt;（b main）</p>
+</li>
+<li><p>b加&lt;行号&gt;（b numble）</p>
+</li>
+<li><p>b加*&lt;代码地址&gt;（b *0x18）</p>
+</li>
+</ol>
+</li>
+<li><p><strong>finish（步出）</strong></p>
+<p>结束函数，从函数里直接出来</p>
+</li>
+<li><p><strong>d  数字</strong><br>删除断点</p>
+</li>
+<li><p><em><strong>set</strong></em></p>
+<p>改变变量值</p>
+<ol>
+<li>set *0x地址&#x3D;数值（给地址赋值）       <code>set *0x8888=62</code></li>
+<li>set $寄存器&#x3D;数值（给寄存器赋值）   <code>set $rip=62</code></li>
+<li>set *((unsigned int)$ebp..)&#x3D;0x18</li>
+</ol>
+</li>
+<li><p><strong>vmmap</strong></p>
+<p>程序中关键地址段</p>
+</li>
+<li><p><strong>list</strong></p>
+<p>显示源文件</p>
+</li>
+<li><p><strong>file</strong></p>
+<p>看具体细节</p>
+<p>(文件格式，大小端序，位数，，，)</p>
+</li>
+<li><p><strong>ldd</strong></p>
+<p>对细节的描述更清楚</p>
+</li>
+<li><p><strong>p</strong></p>
+<p><code>p &amp;函数</code> ( <code>p &amp;main</code>)</p>
+<p>打印出函数的地址</p>
+</li>
+<li><p><strong>search</strong></p>
+<p><code>search &#39;字符&#39;</code></p>
+<p>{搜索某个字符所在的地址}</p>
+</li>
+<li><p><strong>cyclic 数字</strong></p>
+<p><code>cyclic 100</code></p>
+<p>自动生成100个字符</p>
+<p><code>cyclic -l</code>    一串ASCII</p>
+<p>可以计算出这串ASCII所在偏移量</p>
+</li>
+</ul>
+<hr>
+<p><em><strong>反编译指令</strong></em></p>
+<ol>
+<li><p><strong>disassemble</strong><br>查看当前函数的反汇编</p>
+</li>
+<li><p><strong>disassemble 函数名字</strong><br>查看这个函数的反汇编</p>
+</li>
+<li><p><strong>disassemble 地址</strong><br>地址附近函数的反汇编</p>
+</li>
+<li><p><strong>disassemble 地址1，地址2</strong><br>查看地址1到地址2范围内的反汇编</p>
+</li>
+<li><p><strong>disassemble $rip</strong><br>反编译rip现在所直到的函数位置</p>
+</li>
+</ol>
+<hr>
+<p><em><strong>x&#x2F;数字i $rip</strong></em></p>
+<p><strong>从rip开始反汇编（数字）行</strong></p>
+<p><code>x/20i $rip</code>        (从rip开始反汇编20行)</p>
+<p><code>x/20 i 0x12345678</code>   (从0x12345678开始反汇编20行)</p>
+<table>
+<thead>
+<tr>
+<th>i</th>
+<th>d *</th>
+<th>x</th>
+<th>s *</th>
+<th>b</th>
+<th>w *</th>
+<th>g *</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>汇编</td>
+<td>10进制</td>
+<td>16进制</td>
+<td>字符</td>
+<td>一个字节</td>
+<td>8个字节</td>
+<td>4个字节</td>
+</tr>
+</tbody></table>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="left">s</th>
+<th>si</th>
+<th>n</th>
+<th>ni</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">步入</td>
+<td></td>
+<td>步过</td>
+<td></td>
+</tr>
+<tr>
+<td align="left">单步进入<br/>执行一行源程序代码，有函数调用，则进入函数</td>
+<td></td>
+<td>单步跟踪<br/>执行一行源程序代码，有函数调用则直接将函数执行完，不进入函数</td>
+<td></td>
+</tr>
+<tr>
+<td align="left">针对源代码</td>
+<td>针对汇编指令，与s等同</td>
+<td>针对源代码</td>
+<td>针对汇编指令，与n等同</td>
+</tr>
+</tbody></table>
+<hr>
+<table>
+<thead>
+<tr>
+<th>disable b 数字</th>
+<th>enable b 数字</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>让断点失效</td>
+<td>让断点生效</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="调试过程"><a href="#调试过程" class="headerlink" title="调试过程"></a>调试过程</h2><h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><ul>
+<li><p><strong>gcc 文件.c -o 文件_x64</strong> （将源文件编译成x64位系统）                           </p>
+<p><code>gcc hello.c -o hello_x64</code></p>
+</li>
+<li><p><strong>gcc -m32 文件.c -o 文件_x86</strong> （将源文件编译成x86系统下的32位文件）</p>
+<p><code>gcc -m32 hello.c -o hello_x86</code></p>
+</li>
+<li><p><strong>gcc -m64  文件.c  -o 文件_x86</strong>（将源文件编译成x86系统下的64位文件）</p>
+<p><code>gcc -m64 hello.c -0 hello_x86</code></p>
+</li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20205910.png" alt="屏幕截图 2023-12-03 205910"></p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><ul>
+<li><p>.&#x2F;文件_x86(x64)</p>
+<p><code>./hello_x86</code></p>
+</li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20213257.png" alt="屏幕截图 2023-12-03 213257"></p>
+<h3 id="看具体细节"><a href="#看具体细节" class="headerlink" title="看具体细节"></a>看具体细节</h3><ul>
+<li><p><strong>查看文件的少部分内容</strong></p>
+<p>file 文件_x86(x64)</p>
+<p><code>file hello_x86</code></p>
+</li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20213940.png" alt="屏幕截图 2023-12-03 213940"></p>
+<ul>
+<li><p><strong>查看ELF文件</strong></p>
+<p>readelf -a 文件_x86(x64)</p>
+<p><code>readelf -a hello_x86</code></p>
+</li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20214027.png" alt="屏幕截图 2023-12-03 214027"></p>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20214048.png" alt="屏幕截图 2023-12-03 214048"></p>
+<ul>
+<li><p><strong>查看更详细的内容</strong>   ***very important</p>
+<p>ldd 文件_x86(x64)</p>
+<p><code>ldd hello_x86</code></p>
+</li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20215108.png" alt="屏幕截图 2023-12-03 215108"></p>
+<ul>
+<li><p><strong>开始gdb调试</strong></p>
+<p>gdb 文件_x86(x64)</p>
+<p><code>gdb hello_x86</code></p>
+</li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20223940.png" alt="屏幕截图 2023-12-03 223940"></p>
+<ul>
+<li><strong>先r一下，检查是否有错误</strong></li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20224013.png" alt="屏幕截图 2023-12-03 224013"></p>
+<ul>
+<li><strong>再start一下，看一下入口以来设置断点</strong></li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20224112.png" alt="屏幕截图 2023-12-03 224112"></p>
+<ul>
+<li><p><strong>start之后必须要设置断点，不然任何命令都不起作用</strong></p>
+<p><strong>b设置断点</strong></p>
+<p><strong>i b检查断点</strong></p>
+</li>
+</ul>
+<p><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-12-03%20224321.png" alt="屏幕截图 2023-12-03 224321"></p>
+<p><em><strong>然后就可以开始正式调试了！！！</strong></em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://sssxc.xyz">XC-lei</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://sssxc.xyz/CTF/%E5%B7%A5%E5%85%B7/gdb/">http://sssxc.xyz/CTF/%E5%B7%A5%E5%85%B7/gdb/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://sssxc.xyz" target="_blank">Xcs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/linux/">linux</a><a class="post-meta__tags" href="/tags/%E8%B0%83%E8%AF%95%E5%B7%A5%E5%85%B7/">调试工具</a></div><div class="post_share"><div class="social-share" data-image="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/CTF/pwn/Stack/" title="stack_"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">stack_</div></div></a></div><div class="next-post pull-right"><a href="/CTF/%E5%B7%A5%E5%85%B7/chat%20GPT/" title="chat GPT"><img class="cover" src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/pexels-sebastiaan-stam-1480690.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">chat GPT</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/Image_1699885009870.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">XC-lei</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4"><span class="toc-number">2.</span> <span class="toc-text">命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%8C%87%E4%BB%A4"><span class="toc-number">2.1.</span> <span class="toc-text">编译指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E8%B0%83%E8%AF%95%E6%8C%87%E4%BB%A4"><span class="toc-number">2.2.</span> <span class="toc-text">基础调试指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">调试过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-number">3.1.</span> <span class="toc-text">编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-number">3.2.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9C%8B%E5%85%B7%E4%BD%93%E7%BB%86%E8%8A%82"><span class="toc-number">3.3.</span> <span class="toc-text">看具体细节</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CTF/pwn/Heap/" title="heap_">heap_</a><time datetime="2024-03-01T11:10:41.398Z" title="发表于 2024-03-01 19:10:41">2024-03-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/format/" title="无题">无题</a><time datetime="2024-01-25T11:54:40.845Z" title="发表于 2024-01-25 19:54:40">2024-01-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CTF/pwn/Stack/" title="stack_">stack_</a><time datetime="2024-01-20T13:02:43.430Z" title="发表于 2024-01-20 21:02:43">2024-01-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CTF/%E5%B7%A5%E5%85%B7/gdb/" title="gdb的使用">gdb的使用</a><time datetime="2024-01-20T13:02:42.081Z" title="发表于 2024-01-20 21:02:42">2024-01-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/CTF/%E5%B7%A5%E5%85%B7/chat%20GPT/" title="chat GPT"><img src="https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/pexels-sebastiaan-stam-1480690.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="chat GPT"/></a><div class="content"><a class="title" href="/CTF/%E5%B7%A5%E5%85%B7/chat%20GPT/" title="chat GPT">chat GPT</a><time datetime="2023-11-16T04:51:47.843Z" title="发表于 2023-11-16 12:51:47">2023-11-16</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://skymirror-1322365871.cos.ap-beijing.myqcloud.com/pexels-sebastiaan-stam-1480691.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By XC-lei</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"></div><div id="rightside-config-show"><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const initValine = () => {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'vObQE3oSG0duecRgH4T9yp8K-gzGzoHsz',
+      appKey: 'Ra7v15YrsapkpYCFJkR46yMR',
+      avatar: 'monsterid',
+      serverURLs: 'https://vobqe3os.lc-cn-n1-shared.com',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  const loadValine = async () => {
+    if (typeof Valine === 'function') initValine()
+    else {
+      await getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js')
+      initValine()
+    }
+  }
+
+  if ('Valine' === 'Valine' || !false) {
+    if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+    else setTimeout(loadValine, 0)
+  } else {
+    window.loadOtherComment = loadValine
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
